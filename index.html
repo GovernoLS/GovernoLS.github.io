@@ -1,124 +1,129 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Calcolo Pulizia Fedina</title>
   <style>
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+
     :root {
-      --bg-color: #203a43;
+      --bg-gradient: linear-gradient(to right, #0f2027, #203a43, #2c5364);
       --primary: #ffcc00;
       --primary-dark: #e6b800;
       --input-bg: #f1f1f1;
       --input-text: #333;
-      --panel-bg: rgba(20, 35, 45, 0.8);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: var(--bg-color);
+      padding: 2rem 1rem;
+      margin: 0;
+      background: var(--bg-gradient);
       color: #fff;
-      display: flex;
-      justify-content: center;
-      padding: 1rem;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 500px;
-      background: var(--panel-bg);
-      padding: 1.5rem;
-      border-radius: 10px;
     }
 
     h2, h3 {
       text-align: center;
       color: var(--primary);
-      margin-bottom: 0.5rem;
+    }
+
+    input, button, select {
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      width: 100%;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+    }
+
+    input[type="number"], select {
+      background-color: var(--input-bg);
+      color: var(--input-text);
+    }
+
+    button {
+      background-color: var(--primary);
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-dark);
     }
 
     label {
       font-weight: bold;
-      margin-top: 1rem;
       display: block;
+      margin-top: 1rem;
     }
 
-    input[type="number"], select {
-      width: 100%;
-      padding: 0.8rem;
-      margin-top: 0.5rem;
-      border: none;
-      border-radius: 6px;
-      background: var(--input-bg);
-      color: var(--input-text);
-      font-size: 1rem;
-    }
-
-    button {
-      width: 100%;
-      padding: 0.8rem;
-      margin-top: 0.5rem;
-      background: var(--primary);
-      color: #000;
+    .result {
+      margin-top: 1.5rem;
       font-weight: bold;
-      border: none;
-      border-radius: 6px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.3s;
+      font-size: 1.3rem;
+      text-align: center;
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      border-radius: 10px;
     }
-
-    button:hover { background: var(--primary-dark); }
 
     ul#listaFatture {
-      list-style: none;
+      list-style-type: none;
+      padding: 0;
       margin-top: 1rem;
     }
 
     ul#listaFatture li {
-      background: var(--input-bg);
-      color: var(--input-text);
-      padding: 0.5rem;
-      border-radius: 4px;
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 0.5rem 0.8rem;
+      border-radius: 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 0.3rem;
     }
 
-    ul#listaFatture li button {
-      background: red;
+    ul#listaFatture li .remove-btn {
+      background-color: red;
       color: white;
       border: none;
+      width: 24px;
+      height: 24px;
       border-radius: 4px;
-      padding: 0.3rem 0.6rem;
       cursor: pointer;
-    }
-
-    .result {
-      margin-top: 1.5rem;
+      font-size: 0.8rem;
       text-align: center;
-      font-size: 1.3rem;
-      padding: 1rem;
-      background: var(--input-bg);
-      color: var(--input-text);
-      border-radius: 6px;
+      line-height: 24px;
+      padding: 0;
     }
 
-    input[type="checkbox"] {
-      transform: scale(1.2);
-      margin-right: 0.5rem;
-      vertical-align: middle;
+    @media screen and (max-width: 600px) {
+      .container {
+        max-width: 100%;
+      }
+
+      .result {
+        font-size: 1.1rem;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>Calcolo Pulizia Fedina</h2>
+
     <label>Inserisci fattura:</label>
-    <input type="number" id="fattura" placeholder="Es: 500">
+    <input type="number" id="fattura" placeholder="Es: 500" />
     <button onclick="aggiungiFattura()">Aggiungi Fattura</button>
 
     <ul id="listaFatture"></ul>
@@ -133,53 +138,61 @@
       <option value="1">Quarta o più (+100%)</option>
     </select>
 
-    <label><input type="checkbox" id="procuratore"> Aggiungi 10% compenso procuratore</label>
     <button onclick="calcolaTotale()">Calcola Totale Finale</button>
 
-    <div class="result">Totale Finale: <span id="totaleFinale">0</span>$</div>
+    <div class="result">
+      Totale Finale: <span id="totaleFinale">0</span>$<br />
+      Compenso Procuratore (10%): <span id="compenso">0</span>$
+    </div>
   </div>
 
   <script>
-    let totale = 0, fatture = [];
+    let totale = 0;
+    let fatture = [];
 
     function aggiornaLista() {
       const lista = document.getElementById("listaFatture");
       lista.innerHTML = "";
-      fatture.forEach((v, i) => {
+      fatture.forEach((valore, index) => {
         const li = document.createElement("li");
-        li.textContent = v.toFixed(2) + "$ ";
-        const btn = document.createElement("button");
-        btn.textContent = "X";
-        btn.onclick = () => rimuoviFattura(i);
-        li.appendChild(btn);
+        li.innerHTML = `
+          <span>${formattaNumero(valore)}$</span>
+          <button class="remove-btn" onclick="rimuoviFattura(${index})">X</button>
+        `;
         lista.appendChild(li);
       });
-      document.getElementById("totaleFatture").innerText = totale.toFixed(2);
+      document.getElementById("totaleFatture").innerText = formattaNumero(totale);
     }
 
     function aggiungiFattura() {
-      const v = parseFloat(document.getElementById("fattura").value);
-      if (!isNaN(v) && v > 0) {
-        fatture.push(v);
-        totale += v;
+      const input = document.getElementById("fattura");
+      const valore = parseFloat(input.value);
+      if (!isNaN(valore) && valore > 0) {
+        fatture.push(valore);
+        totale += valore;
         aggiornaLista();
-        document.getElementById("fattura").value = "";
+        input.value = "";
       }
     }
 
-    function rimuoviFattura(i) {
-      totale -= fatture[i];
-      fatture.splice(i, 1);
+    function rimuoviFattura(index) {
+      totale -= fatture[index];
+      fatture.splice(index, 1);
       aggiornaLista();
     }
 
     function calcolaTotale() {
-      const mol = parseFloat(document.getElementById("numeroPulizia").value);
-      let res = totale + totale * mol;
-      if (document.getElementById("procuratore").checked) {
-        res += res * 0.10;
-      }
-      document.getElementById("totaleFinale").innerText = res.toFixed(2);
+      const moltiplicatore = parseFloat(document.getElementById("numeroPulizia").value);
+      let risultato = totale + (totale * moltiplicatore);
+      let compenso = risultato * 0.10;
+      risultato += compenso;
+
+      document.getElementById("totaleFinale").innerText = formattaNumero(risultato);
+      document.getElementById("compenso").innerText = formattaNumero(compenso);
+    }
+
+    function formattaNumero(num) {
+      return Math.floor(num).toLocaleString('it-IT');
     }
   </script>
 </body>
