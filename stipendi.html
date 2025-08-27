@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="it">
+<!DOCTYPE html><html lang="it">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -84,23 +83,12 @@
 </head>
 <body>
 <div class="container">
-  <h2>Calcolatore Stipendio</h2>
+  <h2>Calcolatore Stipendio</h2><label>Seleziona ramo:</label> <select id="ramo" onchange="selezionaRamo()"> <option value="">-- Scegli --</option> <option value="giurisprudenza">Giurisprudenza</option> <option value="secret">Secret Service</option> </select>
 
-  <label>Seleziona ramo:</label>
-  <select id="ramo" onchange="selezionaRamo()">
-    <option value="">-- Scegli --</option>
-    <option value="giurisprudenza">Giurisprudenza</option>
-    <option value="secret">Secret Service</option>
-  </select>
-
-  <div id="passaggi" style="display:none;"></div>
-
-  <div class="result" id="result" style="display:none;">
+  <div id="passaggi" style="display:none;"></div>  <div class="result" id="result" style="display:none;">
     Stipendio Totale: <span id="stipendioTotale">0</span>$
   </div>
-</div>
-
-<script>
+</div><script>
 // ================== DATI ==================
 const stipendiGiurisprudenza = {
   'Assistente Legale': 100000,
@@ -275,196 +263,6 @@ function mostraRisultato(totale) {
   document.getElementById('stipendioTotale').innerText = totale.toLocaleString('it-IT');
 }
 
-</script>
-</div>
-</body>
-</html>
-    background-color: var(--primary);
-    color: #000;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: block;
-    margin: 1rem auto;
-    padding: 0.9rem 1.5rem;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  }
-  button:hover { background-color: var(--primary-dark); transform: scale(1.05); }
-  label { font-weight: bold; display: block; margin-top: 1rem; }
-  .result {
-    margin-top: 1.5rem;
-    font-weight: bold;
-    font-size: 1.3rem;
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 1rem;
-    border-radius: 10px;
-  }
-  .bonus-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 0.7rem;
-    margin-top: 1rem;
-    text-align: center;
-  }
-  .bonus-item {
-    padding: 1rem;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    background: var(--bonus-off);
-    user-select: none;
-  }
-  .bonus-item.active {
-    background: var(--bonus-on);
-    color: #000;
-    transform: scale(1.05);
-  }
-  @media screen and (max-width: 600px) {
-    .container { max-width: 100%; }
-    .result { font-size: 1.1rem; }
-  }
-</style>
-</head>
-<body>
-<div class="container">
-  <h2>Calcolatore Stipendio</h2>
-
-  <label>Seleziona ramo:</label>
-  <select id="ramo" onchange="selezionaRamo()">
-    <option value="">-- Scegli --</option>
-    <option value="giurisprudenza">Giurisprudenza</option>
-    <option value="secret">Secret Service</option>
-  </select>
-
-  <div id="passaggi" style="display:none;"></div>
-
-  <div class="result" id="result" style="display:none;">
-    Stipendio Totale: <span id="stipendioTotale">0</span>$
-  </div>
-</div>
-
-<script>
-const stipendiGiurisprudenza = {
-  "Avvocato Junior": 2500,
-  "Avvocato Senior": 4500
-};
-const bonusVari = {
-  "Bonus 1": 500,
-  "Bonus 2": 1000,
-  "Bonus 3": 1500
-};
-const stipendiSecret = {
-  "Agente": 3000,
-  "Capo Agente": 5000
-};
-const segretariSecret = [
-  'Segretario Degli Interni','Segretario Della Difesa','Segretario delle Finanze','Segretario Del Lavoro',
-  'Sottosegretario Degli Interni','Sottosegretario Della Difesa','Sottosegretario Delle Finanze','Sottosegretario Del Lavoro'
-];
-
-function selezionaRamo() {
-  const ramo = document.getElementById('ramo').value;
-  const container = document.getElementById('passaggi');
-  container.innerHTML = '';
-  container.style.display = 'block';
-
-  if (ramo === 'giurisprudenza') {
-    creaSelect(container, 'grado', Object.keys(stipendiGiurisprudenza), 'Seleziona grado');
-    container.innerHTML += '<div id="extraGiurisprudenza"></div>';
-    container.innerHTML += '<button onclick="calcolaGiurisprudenza()">Calcola Stipendio</button>';
-    document.getElementById('grado').addEventListener('change', aggiornaExtraGiurisprudenza);
-  }
-
-  if (ramo === 'secret') {
-    creaSelect(container, 'gradoSecret', Object.keys(stipendiSecret), 'Seleziona grado Secret');
-    container.innerHTML += '<label>È sottosegretario o segretario?</label><select id="sottosegretario"><option value="no">No</option><option value="si">Si</option></select>';
-    container.innerHTML += '<div id="menuSottosegretari" style="display:none;"></div>';
-    container.innerHTML += '<div id="extraSecret"></div>';
-    container.innerHTML += '<button onclick="calcolaSecret()">Calcola Stipendio</button>';
-    document.getElementById('sottosegretario').addEventListener('change', mostraMenuSottosegretari);
-    // mostra bonus anche per normali Secret
-    aggiungiBonus(document.getElementById('extraSecret'), 'bonusS_');
-  }
-}
-
-function creaSelect(container, id, options, label) {
-  container.innerHTML += `<label>${label}</label>`;
-  let selectHTML = `<select id='${id}'><option value=''>-- Scegli --</option>`;
-  options.forEach(opt => selectHTML += `<option value='${opt}'>${opt}</option>`);
-  selectHTML += '</select>';
-  container.innerHTML += selectHTML;
-}
-
-function aggiornaExtraGiurisprudenza() {
-  const grado = document.getElementById('grado').value;
-  const div = document.getElementById('extraGiurisprudenza');
-  div.innerHTML = '';
-  if (grado) {
-    div.innerHTML += '<label>Fatturato totale:</label><input type="number" id="fatturato" placeholder="Es: 50000" />';
-    aggiungiBonus(div, 'bonus_');
-  }
-}
-
-function mostraMenuSottosegretari() {
-  const div = document.getElementById('menuSottosegretari');
-  const extraDiv = document.getElementById('extraSecret');
-  extraDiv.innerHTML = ''; // reset dei bonus
-  if (document.getElementById('sottosegretario').value === 'si') {
-    creaSelect(div, 'gradoSottosegretario', segretariSecret, 'Seleziona Segretario/Sottosegretario');
-    div.innerHTML += '<label>Fatturato totale:</label><input type="number" id="fatturatoSecret" placeholder="Es: 50000" />';
-    div.style.display = 'block';
-    aggiungiBonus(extraDiv, 'bonusS_');
-  } else {
-    div.style.display = 'none';
-    div.innerHTML = '';
-    aggiungiBonus(extraDiv, 'bonusS_');
-  }
-}
-
-function aggiungiBonus(div, prefix) {
-  div.innerHTML += '<label>Bonus Vari:</label><div class="bonus-grid">';
-  for (const bonus in bonusVari) {
-    div.innerHTML += `<div class='bonus-item' id='${prefix}${bonus}' onclick="toggleBonus('${prefix}${bonus}')">${bonus}</div>`;
-  }
-  div.innerHTML += '</div>';
-}
-
-function toggleBonus(id) { document.getElementById(id).classList.toggle('active'); }
-function isBonusActive(id) { return document.getElementById(id)?.classList.contains('active'); }
-
-function calcolaGiurisprudenza() {
-  const grado = document.getElementById('grado').value;
-  let totale = stipendiGiurisprudenza[grado] || 0;
-  let fatturato = parseFloat(document.getElementById('fatturato').value) || 0;
-  totale += fatturato;
-  for (const bonus in bonusVari) { if (isBonusActive(`bonus_${bonus}`)) totale += bonusVari[bonus]; }
-  mostraRisultato(totale);
-}
-
-function calcolaSecret() {
-  const grado = document.getElementById('gradoSecret').value;
-  const sottosegretario = document.getElementById('sottosegretario').value === 'si';
-  let totale = 0;
-  if (sottosegretario) {
-    let gradoSS = document.getElementById('gradoSottosegretario').value;
-    totale = stipendiGiurisprudenza[gradoSS] || 0;
-    let fatturato = parseFloat(document.getElementById('fatturatoSecret').value) || 0;
-    totale += fatturato;
-  } else {
-    totale = stipendiSecret[grado] || 0;
-  }
-  const div = document.getElementById('extraSecret');
-  for (const bonus in bonusVari) { if (isBonusActive(`bonusS_${bonus}`)) totale += bonusVari[bonus]; }
-  mostraRisultato(totale);
-}
-
-function mostraRisultato(totale) {
-  const div = document.getElementById('result');
-  div.style.display = 'block';
-  document.getElementById('stipendioTotale').innerText = totale.toLocaleString('it-IT');
-}
-</script>
+</script></div>
 </body>
 </html>
