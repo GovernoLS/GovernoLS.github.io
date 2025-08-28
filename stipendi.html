@@ -175,12 +175,7 @@ function selezionaRamo() {
   if (ramo === 'giurisprudenza') {
     creaSelect(container, 'grado', Object.keys(stipendiGiurisprudenza), 'Seleziona grado');
     container.innerHTML += '<div id="extraGiurisprudenza"></div>';
-
-    const btn = document.createElement('button');
-    btn.textContent = 'Calcola Stipendio';
-    btn.addEventListener('click', calcolaGiurisprudenza);
-    container.appendChild(btn);
-
+    container.innerHTML += '<button onclick="calcolaGiurisprudenza()">Calcola Stipendio</button>';
     document.getElementById('grado').addEventListener('change', aggiornaExtraGiurisprudenza);
   }
 
@@ -189,17 +184,11 @@ function selezionaRamo() {
     container.innerHTML += '<label>È sottosegretario o segretario?</label><select id="sottosegretario"><option value="no">No</option><option value="si">Si</option></select>';
     container.innerHTML += '<div id="menuSottosegretari" style="display:none;"></div>';
     container.innerHTML += '<div id="extraSecret"></div>';
-
-    const btn = document.createElement('button');
-    btn.textContent = 'Calcola Stipendio';
-    btn.addEventListener('click', calcolaSecret);
-    container.appendChild(btn);
-
+    container.innerHTML += '<button onclick="calcolaSecret()">Calcola Stipendio</button>';
     document.getElementById('sottosegretario').addEventListener('change', mostraMenuSottosegretari);
     document.getElementById('gradoSecret').addEventListener('change', aggiornaExtraSecret);
   }
 }
-
 
 function creaSelect(container, id, options, label) {
   container.innerHTML += `<label>${label}</label>`;
@@ -251,26 +240,23 @@ function aggiungiBonus(div, prefix) {
   div.innerHTML += '</div>';
 }
 
+function toggleBonus(id) { document.getElementById(id).classList.toggle('active'); }
+function isBonusActive(id) { return document.getElementById(id)?.classList.contains('active'); }
+
 function calcolaGiurisprudenza() {
   const grado = document.getElementById('grado').value;
+  const bonusGrado = document.getElementById('bonusGrado').value === 'si';
   let totale = 0;
 
-  const bonusGrado = document.getElementById('bonusGrado').value === 'si';
   if (bonusGrado) {
-    totale += stipendiGiurisprudenza[grado] || 0; 
-  }
-
-  const fatturato = parseFloat(document.getElementById('fatturato')?.value) || 0;
-  totale += fatturato; 
-
-
-  for (const bonus in bonusVari) { 
-    if (isBonusActive(`bonus_${bonus}`)) totale += bonusVari[bonus]; 
-  }
+    totale = stipendiGiurisprudenza[grado] || 0; // stipendio base se idoneo
+    const fatturato = parseFloat(document.getElementById('fatturato')?.value) || 0;
+    totale += fatturato; // aggiunge fatturato
+  } 
+  // se non idoneo, totale resta 0
 
   mostraRisultato(totale);
 }
-
 
 
 function calcolaSecret() {
