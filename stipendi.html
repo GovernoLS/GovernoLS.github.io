@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="it">
+<!DOCTYPE html>
+<html lang="it">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -107,14 +108,10 @@ const stipendiGiurisprudenza = {
   'Vice Governatore': 900000,
   'Segretario Di Stato': 600000,
   'Segretario Della Giustizia': 500000,
-  'Segretario Degli Interni': 500000,
-  'Segretario Della Difesa': 500000,
   'Segretario delle Finanze': 500000,
   'Segretario Del Lavoro': 500000,
   'Sottosegretario Della Giustizia': 400000,
-  'Sottosegretario Della Difesa': 400000,
   'Sottosegretario Delle Finanze': 400000,
-  'Sottosegretario Degli Interni': 400000,
   'Sottosegretario Del Lavoro': 350000,
   'Consigliere Di Giustizia': 300000
 };
@@ -154,8 +151,19 @@ const stipendiSecret = {
   'Direttore': 500000
 };
 
-const segretariSecret = ['Segretario Degli Interni','Segretario Della Difesa','Segretario delle Finanze','Segretario Del Lavoro',
-                        'Sottosegretario Degli Interni','Sottosegretario Della Difesa','Sottosegretario Delle Finanze','Sottosegretario Del Lavoro'];
+const stipendiSegretariSecret = {
+  'Segretario di Stato': 600000,
+  'Segretario Degli Interni': 550000,
+  'Segretario Della Difesa': 550000,
+  'Segretario delle Finanze': 500000,
+  'Segretario Del Lavoro': 500000,
+  'Sottosegretario Degli Interni': 400000,
+  'Sottosegretario Della Difesa': 400000,
+  'Sottosegretario Delle Finanze': 350000,
+  'Sottosegretario Del Lavoro': 350000
+};
+
+const segretariSecret = Object.keys(stipendiSegretariSecret);
 
 // ================== FUNZIONI ==================
 function selezionaRamo() {
@@ -205,7 +213,6 @@ function aggiornaExtraSecret() {
   const div = document.getElementById('extraSecret');
   div.innerHTML = '';
   if (grado) {
-    div.innerHTML += '<label>Fatturato totale:</label><input type="number" id="fatturatoSecret" placeholder="Es: 50000" />';
     aggiungiBonus(div, 'bonusS_');
   }
 }
@@ -213,7 +220,9 @@ function aggiornaExtraSecret() {
 function mostraMenuSottosegretari() {
   const div = document.getElementById('menuSottosegretari');
   if (document.getElementById('sottosegretario').value === 'si') {
+    div.innerHTML = '';
     creaSelect(div, 'gradoSottosegretario', segretariSecret, 'Seleziona Segretario/Sottosegretario');
+    div.innerHTML += '<label>Fatturato totale:</label><input type="number" id="fatturatoSecret" placeholder="Es: 50000" />';
     div.style.display = 'block';
   } else {
     div.style.display = 'none';
@@ -245,13 +254,20 @@ function calcolaSecret() {
   const grado = document.getElementById('gradoSecret').value;
   const sottosegretario = document.getElementById('sottosegretario').value === 'si';
   let totale = 0;
+
   if (sottosegretario) {
     let gradoSS = document.getElementById('gradoSottosegretario').value;
-    totale = stipendiGiurisprudenza[gradoSS] || 0;
-  } else {
-    totale = stipendiSecret[grado] || 0;
+    if (stipendiSegretariSecret.hasOwnProperty(gradoSS)) {
+      totale = stipendiSegretariSecret[gradoSS];
+    } else if (stipendiGiurisprudenza.hasOwnProperty(gradoSS)) {
+      totale = stipendiGiurisprudenza[gradoSS];
+    } else {
+      totale = 0;
+    }
     let fatturato = parseFloat(document.getElementById('fatturatoSecret').value) || 0;
     totale += fatturato;
+  } else {
+    totale = stipendiSecret[grado] || 0;
     for (const bonus in bonusVari) { if (isBonusActive(`bonusS_${bonus}`)) totale += bonusVari[bonus]; }
   }
   mostraRisultato(totale);
