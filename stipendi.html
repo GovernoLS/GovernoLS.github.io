@@ -204,9 +204,11 @@ function aggiornaExtraGiurisprudenza() {
   div.innerHTML = '';
   if (grado) {
     div.innerHTML += '<label>Fatturato totale:</label><input type="number" id="fatturato" placeholder="Es: 50000" />';
+    div.innerHTML += '<label>Idoneo al bonus grado?</label><select id="bonusGrado"><option value="no">No</option><option value="si">Si</option></select>';
     aggiungiBonus(div, 'bonus_');
   }
 }
+
 
 function aggiornaExtraSecret() {
   const grado = document.getElementById('gradoSecret').value;
@@ -244,9 +246,18 @@ function isBonusActive(id) { return document.getElementById(id)?.classList.conta
 function calcolaGiurisprudenza() {
   const grado = document.getElementById('grado').value;
   let totale = stipendiGiurisprudenza[grado] || 0;
+
   let fatturato = parseFloat(document.getElementById('fatturato').value) || 0;
   totale += fatturato;
-  for (const bonus in bonusVari) { if (isBonusActive(`bonus_${bonus}`)) totale += bonusVari[bonus]; }
+
+  const bonusGrado = document.getElementById('bonusGrado').value === 'si';
+  if (bonusGrado) {
+    totale += (stipendiGiurisprudenza[grado] * 0.5);
+  }
+  for (const bonus in bonusVari) { 
+    if (isBonusActive(`bonus_${bonus}`)) totale += bonusVari[bonus]; 
+  }
+
   mostraRisultato(totale);
 }
 
