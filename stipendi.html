@@ -245,21 +245,25 @@ function isBonusActive(id) { return document.getElementById(id)?.classList.conta
 
 function calcolaGiurisprudenza() {
   const grado = document.getElementById('grado').value;
-  let totale = stipendiGiurisprudenza[grado] || 0;
+  let totale = 0;
+
+  const bonusGrado = document.getElementById('bonusGrado').value === 'si';
+  if (bonusGrado) {
+    totale = stipendiGiurisprudenza[grado] * 2; // 100% extra
+  } else {
+    totale = 0; // non idoneo
+  }
 
   let fatturato = parseFloat(document.getElementById('fatturato').value) || 0;
   totale += fatturato;
 
-  const bonusGrado = document.getElementById('bonusGrado').value === 'si';
-  if (bonusGrado) {
-    totale += (stipendiGiurisprudenza[grado] * 0.5);
-  }
   for (const bonus in bonusVari) { 
     if (isBonusActive(`bonus_${bonus}`)) totale += bonusVari[bonus]; 
   }
 
   mostraRisultato(totale);
 }
+
 
 function calcolaSecret() {
   const grado = document.getElementById('gradoSecret').value;
