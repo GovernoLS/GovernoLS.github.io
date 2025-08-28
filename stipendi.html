@@ -257,6 +257,7 @@ function calcolaSecret() {
 
   if (sottosegretario) {
     let gradoSS = document.getElementById('gradoSottosegretario').value;
+
     if (stipendiSegretariSecret.hasOwnProperty(gradoSS)) {
       totale = stipendiSegretariSecret[gradoSS];
     } else if (stipendiGiurisprudenza.hasOwnProperty(gradoSS)) {
@@ -264,14 +265,25 @@ function calcolaSecret() {
     } else {
       totale = 0;
     }
+
+    if (stipendiSecret.hasOwnProperty(grado)) {
+      totale += (stipendiSecret[grado] * 0.5);
+    }
+
+
     let fatturato = parseFloat(document.getElementById('fatturatoSecret').value) || 0;
     totale += fatturato;
+
   } else {
     totale = stipendiSecret[grado] || 0;
-    for (const bonus in bonusVari) { if (isBonusActive(`bonusS_${bonus}`)) totale += bonusVari[bonus]; }
+    for (const bonus in bonusVari) { 
+      if (isBonusActive(`bonusS_${bonus}`)) totale += bonusVari[bonus]; 
+    }
   }
+
   mostraRisultato(totale);
 }
+
 
 function mostraRisultato(totale) {
   const div = document.getElementById('result');
