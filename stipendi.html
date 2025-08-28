@@ -250,11 +250,18 @@ function calcolaGiurisprudenza() {
   let fatturato = parseFloat(document.getElementById('fatturato').value) || 0;
   totale += fatturato;
 
- const bonusGrado = document.getElementById('bonusGrado').value === 'si';
-if (bonusGrado) {
-  totale += stipendiGiurisprudenza[grado];
-} else {
-  totale += 0;
+  const bonusGrado = document.getElementById('bonusGrado').value === 'si';
+  if (bonusGrado) {
+    totale += stipendiGiurisprudenza[grado]; 
+  } else {
+    totale += 0; 
+  }
+
+  for (const bonus in bonusVari) { 
+    if (isBonusActive(`bonus_${bonus}`)) totale += bonusVari[bonus]; 
+  }
+
+  mostraRisultato(totale);
 }
 
   for (const bonus in bonusVari) { 
