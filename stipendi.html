@@ -246,7 +246,7 @@ function isBonusActive(id) { return document.getElementById(id)?.classList.conta
 function calcolaGiurisprudenza() {
   const grado = document.getElementById('grado').value;
   const bonusGrado = document.getElementById('bonusGrado').value === 'si';
-  let totale = stipendiGiurisprudenza[grado] || 0; // prendi sempre lo stipendio base
+  let totale = stipendiGiurisprudenza[grado] || 0; // stipendio base
 
   const fatturato = parseFloat(document.getElementById('fatturato')?.value) || 0;
   totale += fatturato; 
@@ -255,14 +255,43 @@ function calcolaGiurisprudenza() {
     if (isBonusActive(`bonus_${bonus}`)) totale += bonusVari[bonus];
   }
 
+
+  totale += getBonusCustom('bonus_');
+
   if (!bonusGrado) {
     totale = fatturato;
     for (const bonus in bonusVari) {
       if (isBonusActive(`bonus_${bonus}`)) totale += bonusVari[bonus];
     }
+    
+    totale += getBonusCustom('bonus_');
   }
 
   mostraRisultato(totale);
+}
+  
+function aggiungiBonus(div, prefix) {
+  div.innerHTML += '<label>Bonus Vari:</label><div class="bonus-grid">';
+  for (const bonus in bonusVari) {
+    div.innerHTML += `<div class='bonus-item' id='${prefix}${bonus}' onclick="toggleBonus('${prefix}${bonus}')">${bonus}</div>`;
+  }
+  div.innerHTML += '</div>';
+
+  
+  div.innerHTML += `
+    <label>Bonus Custom:</label>
+    <input type="range" id="${prefix}bonusCustom" min="0" max="1000000" step="50000" value="0" oninput="aggiornaCustom('${prefix}')">
+    <div style="text-align:center; margin-top:0.5rem;">Valore: <span id="${prefix}bonusCustomVal">0</span>$</div>
+  `;
+}
+
+function aggiornaCustom(prefix) {
+  let val = document.getElementById(`${prefix}bonusCustom`).value;
+  document.getElementById(`${prefix}bonusCustomVal`).innerText = parseInt(val).toLocaleString('it-IT');
+}
+
+function getBonusCustom(prefix) {
+  return parseInt(document.getElementById(`${prefix}bonusCustom`)?.value || 0);
 }
 
 
@@ -294,16 +323,20 @@ function calcolaSecret() {
       if (isBonusActive(`bonusS_${bonus}`)) totale += bonusVari[bonus]; 
     }
 
+    totale += getBonusCustom('bonusS_');
+
   } else {
     totale = stipendiSecret[grado] || 0;
+
     for (const bonus in bonusVari) { 
       if (isBonusActive(`bonusS_${bonus}`)) totale += bonusVari[bonus]; 
     }
+
+    totale += getBonusCustom('bonusS_');
   }
 
   mostraRisultato(totale);
 }
-
 
 function mostraRisultato(totale) {
   const div = document.getElementById('result');
